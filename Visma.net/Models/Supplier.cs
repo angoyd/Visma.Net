@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.CustomDto;
 using ONIT.VismaNetApi.Models.Enums;
+using System;
+using System.Collections.Generic;
 
 /*
  * Find: ([a-zA-Z]+) ([a-zA-Z]+) { get; set; }
@@ -13,7 +13,7 @@ using ONIT.VismaNetApi.Models.Enums;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class Supplier : DtoProviderBase, IProvideIdentificator, IComparable<Supplier>, IComparable
+    public class Supplier : DtoPaginatedProviderBase, IProvideIdentificator, IComparable<Supplier>, IComparable
     {
         public Supplier()
         {
@@ -137,7 +137,7 @@ namespace ONIT.VismaNetApi.Models
 
         public bool overrideWithClassValues
         {
-            get => Get<NotDto<bool>>().Value;
+            get => Get<NotDto<bool>>(defaultValue: new NotDto<bool>(false)).Value;
             set => Set(new NotDto<bool>(value));
         }
 
@@ -230,10 +230,20 @@ namespace ONIT.VismaNetApi.Models
             get => Get<VatZone>("vatZoneId");
             set => Set(value, "vatZoneId");
         }
+        public bool overrideNumberSeries
+        {
+            get => Get<bool>();
+            set => Set(value);
+        }
+        public string note
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
 
         public int CompareTo(object obj)
         {
-            var othersupplier = (Supplier) obj;
+            var othersupplier = (Supplier)obj;
             if (othersupplier == null)
                 return 0;
             return string.Compare(name, othersupplier.name, StringComparison.Ordinal);

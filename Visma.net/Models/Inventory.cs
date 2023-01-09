@@ -8,7 +8,7 @@ using ONIT.VismaNetApi.Models.Enums;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class Inventory : DtoProviderBase, IProvideIdentificator
+    public class Inventory : DtoPaginatedProviderBase, IProvideIdentificator
     {
         public Inventory()
         {
@@ -23,6 +23,8 @@ namespace ONIT.VismaNetApi.Models
         private List<Attachment> _attachments;
         private List<CrossReference> _crossReferences;
         private List<WarehouseDetails> _warehouseDetails;
+        private List<SupplierDetails> _supplierDetails;
+        private List<Packaging> _packaging;
 
         [JsonProperty]
         public List<Attachment> attachments
@@ -101,7 +103,25 @@ namespace ONIT.VismaNetApi.Models
             set => Set(value);
         }
 
-        public string purchaseUnit
+    public DescriptiveDto defaultWarehouse
+    {
+      get => Get<DescriptiveDto>();
+      set => Set(value);
+    }
+
+    public DescriptiveDto defaultIssueFrom
+    {
+      get => Get<DescriptiveDto>();
+      set => Set(value);
+    }
+
+    public DescriptiveDto defaultReceiptTo
+    {
+      get => Get<DescriptiveDto>();
+      set => Set(value);
+    }
+
+    public string purchaseUnit
         {
             get => Get<string>();
             set => Set(value);
@@ -136,6 +156,24 @@ namespace ONIT.VismaNetApi.Models
         {
             get => _warehouseDetails ?? (_warehouseDetails = new List<WarehouseDetails>());
             private set => _warehouseDetails = value;
+        }
+        [JsonProperty]
+        public List<SupplierDetails> supplierDetails
+        {
+            get => _supplierDetails ?? (_supplierDetails = new List<SupplierDetails>());
+            private set => _supplierDetails = value;
+        }
+
+        public Packaging packaging
+        {
+            get => Get<Packaging>();
+            set => Set(value);
+        }
+
+        public Intrastat intrastat
+        {
+            get => Get<Intrastat>();
+            set => Set(value);
         }
 
         public string GetIdentificator()

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ONIT.VismaNetApi.Lib;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ONIT.VismaNetApi.Models.CustomDto
 {
@@ -30,11 +30,14 @@ namespace ONIT.VismaNetApi.Models.CustomDto
         [JsonProperty]
         public string errorInfo { get; private set; }
 
-        [JsonProperty] 
+        [JsonProperty]
+        public bool active { get; private set; }
+
+        [JsonProperty]
         public JObject extras { get; private set; }
 
         [JsonProperty]
-        public Metadata metadata { get; private set;}
+        public MetaData metadata { get; private set; }
 
         /// <summary>
         /// Sets a segment (department, project) for an invoice line. Remember that you have to set ALL segments for a line.
@@ -61,14 +64,14 @@ namespace ONIT.VismaNetApi.Models.CustomDto
                 }
                 else
                 {
-                    segments.Add(new Segment {segmentId = segmentId, segmentValue = value});
+                    segments.Add(new Segment { segmentId = segmentId, segmentValue = value });
                 }
             }
         }
 
         public object ToDto()
         {
-            return segments.Select(x => new {x.segmentId, x.segmentValue});
+            return segments.Select(x => new { x.segmentId, x.segmentValue });
         }
     }
 }

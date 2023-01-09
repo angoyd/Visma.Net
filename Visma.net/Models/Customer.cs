@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.CustomDto;
 using ONIT.VismaNetApi.Models.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class Customer : DtoProviderBase, IProvideIdentificator, IComparable<Customer>, IComparable
+    public class Customer : DtoPaginatedProviderBase, IProvideIdentificator, IComparable<Customer>, IComparable
     {
         public Customer()
         {
@@ -66,7 +66,7 @@ namespace ONIT.VismaNetApi.Models
         public CreditTerms creditTerms
         {
             get => Get("creditTermsId", new CreditTerms());
-            set => Set(value);
+            set => Set(value, "creditTermsId");
         }
 
 
@@ -161,11 +161,23 @@ namespace ONIT.VismaNetApi.Models
             get => Get<string>();
             set => Set(value);
         }
+        public string gln
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
+        
 
         [JsonProperty]
         public string number
         {
             get => Get<string>();
+            set => Set(value);
+        }
+
+        public bool overrideNumberSeries
+        {
+            get => Get<bool>();
             set => Set(value);
         }
 
@@ -179,6 +191,20 @@ namespace ONIT.VismaNetApi.Models
         {
             get => Get<NumberName>("parentRecordNumber");
             set => Set(value, "parentRecordNumber");
+        }
+
+        /*
+        [JsonProperty("defaultPaymentMethodId")]
+        internal string defaultPaymentMethodId
+        {
+            get => defaultPaymentMethod?.paymentMethodId;
+            set => defaultPaymentMethod = new CustomerPaymentMethod(value, true);
+        }*/
+
+        public CustomerPaymentMethod defaultPaymentMethod
+        {
+            get => Get<CustomerPaymentMethod>();
+            set => Set(value);
         }
 
         public DescriptiveDto priceClass
@@ -242,12 +268,10 @@ namespace ONIT.VismaNetApi.Models
             set => Set(value, "vatZoneId");
         }
 
-        [JsonProperty]
-        public Metadata metadata { get; private set; }
 
         public int CompareTo(object obj)
         {
-            var otherCustomer = (Customer) obj;
+            var otherCustomer = (Customer)obj;
             if (otherCustomer == null)
                 return 0;
             return string.Compare(name, otherCustomer.name, StringComparison.Ordinal);

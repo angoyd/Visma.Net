@@ -3,7 +3,7 @@ using ONIT.VismaNetApi.Models.CustomDto;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class Employee : DtoProviderBase, IProvideIdentificator
+    public class Employee : DtoPaginatedProviderBase, IProvideIdentificator
     {
         public int employeeId
         {
@@ -17,6 +17,12 @@ namespace ONIT.VismaNetApi.Models
             set { Set(value); }
         }
 
+        public string employeeUserId
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
         public string employeeName
         {
             get { return Get<string>(); }
@@ -24,6 +30,12 @@ namespace ONIT.VismaNetApi.Models
         }
 
         public string status
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string department
         {
             get { return Get<string>(); }
             set { Set(value); }

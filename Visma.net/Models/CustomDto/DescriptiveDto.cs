@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ONIT.VismaNetApi.Annotations;
 using ONIT.VismaNetApi.Interfaces;
+using ONIT.VismaNetApi.Lib;
 
 namespace ONIT.VismaNetApi.Models
 {
@@ -99,6 +100,28 @@ namespace ONIT.VismaNetApi.Models
         }
     }
 
+  public class EntryType : DescriptiveDto
+  {
+    public EntryType()
+    {
+
+    }
+    public static implicit operator EntryType(string id)
+    {
+      return new EntryType
+      {
+        id = id
+      };
+    }
+
+    public EntryType(string id)
+        : base(id)
+    {
+    }
+
+  }
+
+
     public class VatCode : DescriptiveDto
     {
         public VatCode()
@@ -159,7 +182,7 @@ namespace ONIT.VismaNetApi.Models
         public NumberDescription defaultTaxCategory { get; private set; }
 
         [JsonProperty]
-        public Metadata metadata { get; private set; }
+        public MetaData metadata { get; private set; }
 
         [JsonProperty]
         public JObject extras { get; private set; }
@@ -265,4 +288,5 @@ namespace ONIT.VismaNetApi.Models
             return new PostingClass(id);
         }
     }
+
 }

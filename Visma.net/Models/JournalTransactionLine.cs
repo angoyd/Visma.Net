@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.Enums;
+using System.Collections.Generic;
 
 namespace ONIT.VismaNetApi.Models
 {
@@ -80,10 +80,18 @@ namespace ONIT.VismaNetApi.Models
         }
 
         [JsonProperty]
-        public DescriptiveDto project { get; private set; }
+        public DescriptiveDto project
+        {
+            get => Get(defaultValue: new DescriptiveDto());
+            set => Set(value);
+        }
 
         [JsonProperty]
-        public DescriptiveDto projectTask { get; private set; }
+        public DescriptiveDto projectTask
+        {
+            get => Get(defaultValue: new DescriptiveDto());
+            set => Set(value);
+        }
 
         public string referenceNumber
         {
@@ -96,6 +104,10 @@ namespace ONIT.VismaNetApi.Models
             get => Get(defaultValue: new CustomDto.Subaccount());
             set => Set(value);
         }
+
+        public double quantity { get => Get<double>(); set => Set(value); }
+
+        public string inventoryNumber { get => Get<string>(); set => Set(value); }
 
         public string transactionDescription
         {

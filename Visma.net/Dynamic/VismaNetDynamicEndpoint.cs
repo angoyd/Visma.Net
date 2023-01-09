@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,6 +40,15 @@ namespace ONIT.VismaNetApi.Dynamic
             }
         }
 
+        public async Task<dynamic> GetAllModifiedSince(DateTime date)
+        {
+            return await VismaNetApiHelper.GetAllModifiedSince<JObject>($"{_base}{_endpointName}", date, _auth);
+        }
+
+        public async Task<Stream> GetStream()
+        {
+            return await VismaNetApiHelper.GetStream($"{_base}{_endpointName}", _auth);
+        }
 
         #endregion
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
@@ -104,7 +114,7 @@ namespace ONIT.VismaNetApi.Dynamic
                     nvc.Add(keyValuePair.Key, keyValuePair.Value);
                 }
             }
-            return await VismaNetApiHelper.GetAll<JObject>($"{_base}{_endpointName}", _auth, nvc);
+            return await VismaNetApiHelper.GetAllAsDefined<JToken>($"{_base}{_endpointName}", _auth, nvc);
         }
 
         #endregion

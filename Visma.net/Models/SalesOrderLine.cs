@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace ONIT.VismaNetApi.Models
 {
@@ -12,7 +12,6 @@ namespace ONIT.VismaNetApi.Models
         {
             DtoFields.Add(nameof(lineNbr), new DtoValue(0));
             DtoFields.Add(nameof(quantity), new DtoValue(1));
-            RequiredFields.Add("warehouse", new DtoValue(null));
             RequiredFields.Add("salesOrderOperation", new DtoValue("Issue"));
             DtoFields.Add("operation", new NotDto<ApiOperation>(ApiOperation.Insert));
         }
@@ -36,6 +35,14 @@ namespace ONIT.VismaNetApi.Models
             get => Get<NumberName>();
             set => Set(value);
         }
+
+        [JsonProperty]
+        public string projectTaskCd { get; private set; }
+
+        public bool isRotRutDeductible { get => Get<bool>(); set => Set(value); }
+
+        [JsonProperty]
+        public double unitPriceInBaseCurrency { get; private set; }
 
         public bool commissionable
         {
@@ -97,7 +104,7 @@ namespace ONIT.VismaNetApi.Models
             get => Get<NumberDescription>("inventoryNumber");
             set => Set(value, "inventoryNumber");
         }
-        
+
         public string invoiceNbr
         {
             get => Get<string>();
@@ -141,7 +148,7 @@ namespace ONIT.VismaNetApi.Models
         }
 
         [JsonProperty] public double openQty { get; private set; }
-        
+
         public double overshipThreshold
         {
             get => Get<double>();
@@ -213,13 +220,13 @@ namespace ONIT.VismaNetApi.Models
 
         [JsonProperty] public int sortOrder { get; private set; }
 
-        /* This doesn't work in 7.0 
-        public CustomDto.Subaccount subaccount
+
+        public CustomDto.SubaccountOrderLine subaccount
         {
-            get => Get(defaultValue: new CustomDto.Subaccount());
+            get => Get(defaultValue: new CustomDto.SubaccountOrderLine());
             set => Set(value);
         }
-        */
+
         public string taxCategory
         {
             get => Get<string>();
@@ -260,6 +267,12 @@ namespace ONIT.VismaNetApi.Models
         public DescriptiveDto warehouse
         {
             get => Get<DescriptiveDto>();
+            set => Set(value);
+        }
+
+        public string externalLink
+        {
+            get => Get<string>();
             set => Set(value);
         }
     }

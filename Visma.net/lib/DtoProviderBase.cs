@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace ONIT.VismaNetApi.Lib
 {
+
     public class DtoProviderBase : IProvideDto, INotifyPropertyChanged
     {
         private Dictionary<string, object> _data;
@@ -68,7 +69,9 @@ namespace ONIT.VismaNetApi.Lib
                 }
                 else
                 {
-                    dict[dtoField.Key] = CreateDto(dtoField.Value, dtoField.Key);
+                    var dto = CreateDto(dtoField.Value, dtoField.Key);
+                    if (dto != null)
+                        dict[dtoField.Key] = dto;
                 }
             }
             foreach (var required in RequiredFields.Where(x => !dict.ContainsKey(x.Key)))
@@ -133,7 +136,7 @@ namespace ONIT.VismaNetApi.Lib
             {
                 if (value is DtoValue)
                     return value;
-              
+
                 if (value is IProvideCustomDto providesCustomDto)
                 {
                     return providesCustomDto.ToDto();
@@ -141,7 +144,10 @@ namespace ONIT.VismaNetApi.Lib
 
                 if (value is IProvideDto providesDto)
                 {
-                    return new DtoValue(providesDto.ToDto());
+                    var dtoval = providesDto.ToDto();
+                    if (dtoval != null)
+                        return new DtoValue(dtoval);
+                    return null;
                 }
                 if (value is IBecomeDto becomesDto)
                 {

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.CustomDto;
 using ONIT.VismaNetApi.Models.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class SalesOrder : DtoProviderBase, IProvideIdentificator
+    public class SalesOrder : DtoPaginatedProviderBase, IProvideIdentificator
     {
         public SalesOrder()
         {
@@ -18,13 +18,32 @@ namespace ONIT.VismaNetApi.Models
             RequiredFields.Add(nameof(orderType), new DtoValue("SO"));
         }
 
+        public SalesOrder(string orderNo, string orderType)
+        {
+            this.orderNo = orderNo;
+            this.orderType = orderType;
+            RequiredFields.Add(nameof(orderType), new DtoValue(orderType));
+        }
+
         [JsonProperty] public List<Attachment> attachments { get; private set; }
 
-       public NumberName branchNumber
+        [JsonProperty]
+        public string ProjectCD { get; private set; }
+
+        public NumberName branchNumber
         {
             get => Get<NumberName>();
             set => Set(value);
         }
+
+        [JsonProperty]
+        public string commissionPercent { get; private set; }
+
+        [JsonProperty]
+        public string commissionAmount { get; private set; }
+
+        [JsonProperty]
+        public string commissionableAmount { get; private set; }
 
         public DateTime cancelBy
         {
@@ -56,7 +75,7 @@ namespace ONIT.VismaNetApi.Models
             get => Get<SoCustomerSummary>();
             set => Set(value);
         }
-   
+
         public string customerOrder
         {
             get => Get<string>();
@@ -95,6 +114,13 @@ namespace ONIT.VismaNetApi.Models
         }
 
         [JsonProperty] public string errorInfo { get; private set; }
+
+        [JsonProperty]
+        public double exchangeRate
+        {
+            get;
+            private set;
+        }
 
         [JsonProperty] public JObject extras { get; private set; }
 
@@ -145,6 +171,13 @@ namespace ONIT.VismaNetApi.Models
             private set => Set(value);
         }
 
+        [JsonProperty]
+        public List<SalesOrderShipment> shipments
+        {
+            get => Get(defaultValue: new List<SalesOrderShipment>());
+            private set => Set(value);
+        }
+
         public LocationSummary location
         {
             get => Get(defaultValue: new LocationSummary());
@@ -163,11 +196,24 @@ namespace ONIT.VismaNetApi.Models
             set => Set(value, "orderNumber");
         }
 
+        public string paymentRef
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
+
         [JsonProperty]
         public double orderTotal
         {
             get;// => Get<double>();
             private set;// => Set(value);
+        }
+
+        [JsonProperty]
+        public double orderTotalInBaseCurrency
+        {
+            get;
+            private set;
         }
 
         public string orderType
@@ -187,18 +233,32 @@ namespace ONIT.VismaNetApi.Models
             get => Get<string>();
             set => Set(value);
         }
-
-        public Owner owner
+        public string gln
         {
-            get => Get(defaultValue: new Owner());
+            get => Get<string>();
             set => Set(value);
         }
 
         [JsonProperty]
+        public Owner owner { get; private set; }
+
+        [JsonProperty]
         public string postPeriod
         {
-            get; 
+            get;
             private set;
+        }
+
+        public string cashAccount
+        {
+            get => Get<string>();
+            set => Set(value);
+        }
+
+        public bool emailed
+        {
+            get => Get<bool>();
+            set => Set(value);
         }
 
         public DescriptiveDto preferredWarehouse
@@ -327,12 +387,19 @@ namespace ONIT.VismaNetApi.Models
             get;// => Get<string>();
             private set;//( => Set(value);
         }
-        [JsonProperty]
 
+        [JsonProperty]
         public double taxTotal
         {
             get;// => Get<double>();
             private set; //=> Set(value);
+        }
+
+        [JsonProperty]
+        public double taxTotalInBaseCurrency
+        {
+            get;
+            private set;
         }
 
         public DescriptiveDto terms
@@ -347,12 +414,18 @@ namespace ONIT.VismaNetApi.Models
             private set => Set(value);
         }
 
-        
         [JsonProperty]
         public double vatExemptTotal
         {
             get;// => Get<double>();
             private set;// => Set(value);
+        }
+
+        [JsonProperty]
+        public double vatExemptTotalInBaseCurrency
+        {
+            get;
+            private set;
         }
 
         [JsonProperty]
@@ -363,7 +436,46 @@ namespace ONIT.VismaNetApi.Models
         }
 
         [JsonProperty]
-        public Metadata metadata { get; private set; }
+        public double vatTaxableTotalInBaseCurrency
+        {
+            get;
+            private set;
+        }
+
+        public bool isRotRutDeductible
+        {
+            get => Get<bool>();
+            set => Set(value);
+        }
+
+        public RotRutDetails rotRutDetails
+        {
+            get => Get(defaultValue: new RotRutDetails());
+            set => Set(value);
+        }
+
+        public DescriptiveDto paymentMethod
+        {
+            get => Get(defaultValue: new DescriptiveDto());
+            set => Set(value);
+        }
+
+        [JsonProperty]
+        public double discountTotal
+        {
+            get;
+            private set;
+        }
+
+        [JsonProperty]
+        public double discountTotalInBaseCurrency { get; private set; }
+
+        public int contactId
+        {
+            get => Get<int>();
+            set => Set(value);
+        }
+
 
         public string GetIdentificator()
         {

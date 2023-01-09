@@ -10,7 +10,7 @@ using ONIT.VismaNetApi.Models.Enums;
 
 namespace ONIT.VismaNetApi.Models
 {
-    public class CustomerInvoice : DtoProviderBase, IProvideIdentificator
+    public class CustomerInvoice : DtoPaginatedProviderBase, IProvideIdentificator
     {
         private List<Attachment> _attachments;
 
@@ -144,6 +144,13 @@ namespace ONIT.VismaNetApi.Models
             set => Set(value);
         }
 
+        public CustomerVatZone customerVatZone
+        {
+            get => Get<CustomerVatZone>("customerVatZoneId");
+            set => Set(value, "customerVatZoneId");
+
+        }
+
         [JsonProperty]
         public decimal detailTotal
         {
@@ -175,6 +182,18 @@ namespace ONIT.VismaNetApi.Models
         {
             get; // { return Get<CustomerDocumentType>(); }
             private set; // { Set(value); }
+        }
+
+        public SoAddress invoiceAddress
+        {
+            get => Get("billingAddress", defaultValue: new SoAddress());
+            set => Set(value, "billingAddress"); 
+        }
+        
+        public ContactInvoice invoiceContact
+        {
+            get => Get(defaultValue: new ContactInvoice());
+            set => Set(value);
         }
 
         [JsonProperty] public DateTime dunningLetterDate { get; private set; }
@@ -293,13 +312,13 @@ namespace ONIT.VismaNetApi.Models
             set => Set(value);
         }
 
-        /* public RotRutDetails rotRutDetails
-        {
-            get => Get(defaultValue: new RotRutDetails());
-            set => Set(value);
-        }*/
+    public RotRutDetails rotRutDetails
+    {
+      get => Get(defaultValue: new RotRutDetails());
+      set => Set(value);
+    }
 
-        [JsonProperty]
+    [JsonProperty]
         public string salesPersonDescr
         {
             get; // { return Get<string>(); }
@@ -327,6 +346,13 @@ namespace ONIT.VismaNetApi.Models
             get; //=> Get("taxDetailLines", new List<TaxDetail>());
         
             private set; //=> Set(value, "taxDetailsLines");
+        }
+
+        [JsonProperty]
+        public List<Applications> applications
+        {
+            get; 
+            private set; 
         }
 
         [JsonProperty]
@@ -369,6 +395,35 @@ namespace ONIT.VismaNetApi.Models
         {
             get; // { return Get<decimal>(); }
             private set; // { Set(value); }
+        }
+        [JsonProperty]
+        public decimal roundingDiff
+        {
+            get;
+            private set;
+        }
+
+        public bool sendToAutoInvoice
+		{
+			get => Get<bool>();
+			set => Set(value);
+		}
+
+        public bool dontPrint
+        {
+            get => Get<bool>();
+            set => Set(value);
+        }
+
+        public bool dontEmail
+        {
+            get => Get<bool>();
+            set => Set(value);
+        }
+        public bool overrideNumberSeries
+        {
+            get => Get<bool>();
+            set => Set(value);
         }
 
         public string GetIdentificator()
@@ -450,5 +505,7 @@ namespace ONIT.VismaNetApi.Models
             get => Get<string>();
             set => Set(value);
         }
-    }
+
+		
+	}
 }

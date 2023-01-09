@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ONIT.VismaNetApi.Lib
@@ -158,6 +159,7 @@ namespace ONIT.VismaNetApi.Lib
             }
         }
 
+
         internal static Task<string> AddAttachmentToInvoice(VismaNetAuthorization auth, string number,
             byte[] bytes,
             string fileName)
@@ -174,11 +176,37 @@ namespace ONIT.VismaNetApi.Lib
             return AddAttachmentToController<string>(auth, url, stream, fileName);
         }
 
+        internal static Task<string> AddAttachmentToCreditNote(VismaNetAuthorization auth, string number,
+            byte[] bytes,
+            string fileName)
+        {
+            var url = GetApiUrlForController(VismaNetControllers.CustomerCreditNote, $"/{number}/attachment");
+            return AddAttachmentToController<string>(auth, url, bytes, fileName);
+        }
+
+        internal static Task<string> AddAttachmentToCreditNote(VismaNetAuthorization auth, string number,
+            Stream stream,
+            string fileName)
+        {
+            var url = GetApiUrlForController(VismaNetControllers.CustomerCreditNote, $"/{number}/attachment");
+            return AddAttachmentToController<string>(auth, url, stream, fileName);
+        }
+
         internal static Task<string> AddAttachmentToSupplierInvoice(VismaNetAuthorization auth, string number,
             byte[] bytes,
             string fileName)
         {
             var url = GetApiUrlForController(VismaNetControllers.SupplierInvoices, $"/{number}/attachment");
+            return AddAttachmentToController<string>(auth, url, bytes, fileName);
+        }
+
+        internal static Task<string> AddAttachmentToJournalTransaction(VismaNetAuthorization auth, string batch,
+            byte[] bytes,
+            string fileName,
+            JournalTransactionModule module = JournalTransactionModule.ModuleGL)
+        {
+
+            var url = GetApiUrlForController(VismaNetControllers.JournalTransactionV2, $"/module/{module.ToString().Substring(6)}/{batch}/attachment");
             return AddAttachmentToController<string>(auth, url, bytes, fileName);
         }
 
@@ -246,6 +274,34 @@ namespace ONIT.VismaNetApi.Lib
                 return container.segments;
             }
         }
+
+        internal static async Task<List<ExchangeRate>> FetchExchangeRates(string toCurrencyId, DateTime effectiveDate, VismaNetAuthorization auth)
+        {
+            var webClient = GetHttpClient(auth);
+            {
+                var apiUrl = GetApiUrlForController(VismaNetControllers.CurrencyRate, $"?toCurrency={toCurrencyId.TrimStart('/')}&fromDate={effectiveDate.ToString("yyyy-MM-dd")}&toDate={effectiveDate.ToString("yyyy-MM-dd")}");
+                return await webClient.Get<List<ExchangeRate>>(apiUrl);
+            }
+        }
+
+        internal static async Task<List<ExchangeRate>> AddExchangeRate(ExchangeRate exchangeRate, VismaNetAuthorization auth)
+        {
+            var webClient = GetHttpClient(auth);
+            {
+                var apiUrl = GetApiUrlForController(VismaNetControllers.CurrencyRate, $"/");
+                return await webClient.Post<List<ExchangeRate>>(apiUrl, exchangeRate.ToDto(), $"{GetApiUrlForController(VismaNetControllers.CurrencyRate)}?toCurrency={exchangeRate.toCurrencyId.TrimStart('/')}&fromDate={exchangeRate.effectiveDate.ToString("yyyy-MM-dd")}&toDate={exchangeRate.effectiveDate.ToString("yyyy-MM-dd")}", true);
+            }
+        }
+
+        internal static async Task<List<ExchangeRate>> UpdateExchangeRate(ExchangeRate exchangeRate, VismaNetAuthorization auth)
+        {
+            var webClient = GetHttpClient(auth);
+            {
+                var apiUrl = GetApiUrlForController(VismaNetControllers.CurrencyRate, $"/");
+                return await webClient.Put<List<ExchangeRate>>(apiUrl, exchangeRate.ToDto(), $"{GetApiUrlForController(VismaNetControllers.CurrencyRate)}?toCurrency={exchangeRate.toCurrencyId.TrimStart('/')}&fromDate={exchangeRate.effectiveDate.ToString("yyyy-MM-dd")}&toDate={exchangeRate.effectiveDate.ToString("yyyy-MM-dd")}", true);
+            }
+        }
+
 
         internal static async Task<List<CustomerInvoice>> FetchInvoicesForCustomerCd(string customerCd,
             VismaNetAuthorization authorization)
@@ -337,14 +393,88 @@ namespace ONIT.VismaNetApi.Lib
         internal static async Task<List<T>> GetAll<T>(string apiControllerUri, VismaNetAuthorization authorization,
             NameValueCollection parameters = null)
         {
-            var listOfEntities = new List<T>();
             var webclient = GetHttpClient(authorization);
+            var endpoint = GetApiUrlForController(apiControllerUri, parameters: parameters);
+            return await webclient.Get<List<T>>(endpoint);
+        }
+
+        internal static async Task<T> GetAllAsDefined<T>(string apiControllerUri, VismaNetAuthorization authorization,
+            NameValueCollection parameters = null)
+        {
+            var webclient = GetHttpClient(authorization);
+            var endpoint = GetApiUrlForController(apiControllerUri, parameters: parameters);
+            return await webclient.Get<T>(endpoint);
+        }
+
+        private static NameValueCollection CreatePagionationParameters(int pageSize, int page, NameValueCollection parameters)
+        {
+            var pagination = new NameValueCollection {
+                    { "pageSize", pageSize.ToString() },
+                    { "pageNumber", page.ToString() }
+                };
+
+            if (parameters != null)
             {
-                var endpoint = GetApiUrlForController(apiControllerUri, parameters: parameters);
-                var entities = await webclient.Get<List<T>>(endpoint);
-                listOfEntities.AddRange(entities);
-                return listOfEntities;
+                var nvc = new NameValueCollection(parameters);
+                return nvc.Join(pagination);
             }
+
+            return pagination;
+        }
+
+        public static NameValueCollection Join(this NameValueCollection destination, NameValueCollection source)
+        {
+            if (source == null)
+                return destination;
+            foreach (var key in source.AllKeys)
+                destination[key] = source[key];
+            return destination;
+        }
+
+        const int initialPageSize = 1000;
+        public static async Task<List<T>> GetAllWithPagination<T>(string ApiControllerUri, VismaNetAuthorization Authorization, NameValueCollection parameters = null) where T : DtoPaginatedProviderBase, IProvideIdentificator
+        {
+            var firstPage = await GetAll<T>(ApiControllerUri, Authorization, CreatePagionationParameters(initialPageSize, 1, parameters));
+            var rsp = new List<T>();
+            if (firstPage == null)
+                return rsp;
+            rsp.AddRange(firstPage);
+            var count = firstPage.Sum(x => x.GetSubCount());
+            if (firstPage.FirstOrDefault()?.metadata?.totalCount > count && count > 0)
+            {
+                var totalCount = firstPage[0].metadata.totalCount;
+                var pageSize = count;
+                var pageCount = totalCount / pageSize;
+                var semaphore = new SemaphoreSlim(VismaNet.MaxConcurrentRequests);
+                var taskList = new List<Task<List<T>>>();
+                foreach (var page in Enumerable.Range(2, pageCount))
+                {
+                    await semaphore.WaitAsync();
+                    taskList.Add(Task.Run(async () =>
+                    {
+                        try
+                        {
+                            return await GetAll<T>(ApiControllerUri, Authorization, CreatePagionationParameters(pageSize, page, parameters));
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    }));
+                }
+                var tasks = await Task.WhenAll(taskList);
+                rsp.AddRange(tasks.SelectMany(x => x));
+            }
+            rsp.ForEach(x => x.InternalPrepareForUpdate());
+            return rsp.OrderBy(x => x.GetIdentificator()).ToList();
+        }
+
+        internal static Task<List<T>> GetAllAsyncTask<T>(string apiControllerUri, VismaNetAuthorization authorization,
+            NameValueCollection parameters = null)
+        {
+            var webclient = GetHttpClient(authorization);
+            var endpoint = GetApiUrlForController(apiControllerUri, parameters: parameters);
+            return webclient.Get<List<T>>(endpoint);
         }
 
         internal static async Task<List<T>> GetAllModifiedSince<T>(string apiControllerUri, DateTime dateTime,
@@ -360,6 +490,16 @@ namespace ONIT.VismaNetApi.Lib
                     });
 
                 return await webclient.Get<List<T>>(endpoint);
+            }
+        }
+
+        internal static async Task<Stream> GetStream(string apiControllerUri, VismaNetAuthorization authorization)
+        {
+            var client = GetHttpClient(authorization);
+            {
+                var endpoint = GetApiUrlForController(apiControllerUri);
+
+                return await client.GetStream(endpoint);
             }
         }
 
@@ -433,6 +573,20 @@ namespace ONIT.VismaNetApi.Lib
             var client = GetHttpClient(authorization);
             var actionUrl = GetApiUrlForController($"{controller}/{entityNumber}/action/{actionName}");
             return await client.Post<VismaActionResult>(actionUrl, dto ?? new object());
+        }
+
+        internal static async Task<BackgroundStatus> BackgroundAction(VismaNetAuthorization authorization, string controller, string entityNumber, string actionName, string erpApiBackground, object dto = null)
+        {
+            var client = GetHttpClient(authorization);
+            var actionUrl = GetApiUrlForController($"{controller}/{entityNumber}/action/{actionName}");
+            return await client.Post<BackgroundStatus>(actionUrl, dto ?? new object(), erpApiBackground: erpApiBackground);
+        }
+
+        internal static async Task<CreateShipmentActionResult> CreateShipmentAction(VismaNetAuthorization authorization, string controller, string entityNumber, string actionName, object dto = null)
+        {
+            var client = GetHttpClient(authorization);
+            var actionUrl = GetApiUrlForController($"{controller}/{entityNumber}/action/{actionName}");
+            return await client.Post<CreateShipmentActionResult>(actionUrl, dto ?? new object());
         }
 
         internal static async Task<Stream> InvoicePrint(string RefNr, VismaNetAuthorization authorization)
@@ -581,7 +735,7 @@ namespace ONIT.VismaNetApi.Lib
             }
         }
 
-        private static string GetApiUrlForController(string controller, string append = null,
+        internal static string GetApiUrlForController(string controller, string append = null,
             NameValueCollection parameters = null)
         {
             var controllerUri = string.Format("{0}/{1}{2}",

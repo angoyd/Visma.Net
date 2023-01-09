@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ONIT.VismaNetApi.Lib;
 using ONIT.VismaNetApi.Models.CustomDto;
 using ONIT.VismaNetApi.Models.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ONIT.VismaNetApi.Models
 {
@@ -29,7 +29,7 @@ namespace ONIT.VismaNetApi.Models
         }
     }
 
-    public class SupplierInvoice : DtoProviderBase, IProvideIdentificator
+    public class SupplierInvoice : DtoPaginatedProviderBase, IProvideIdentificator
     {
         private List<Attachment> _attachments;
 
@@ -66,6 +66,15 @@ namespace ONIT.VismaNetApi.Models
         {
             get => _attachments ?? (_attachments = new List<Attachment>());
             private set => _attachments = value;
+        }
+
+
+        [JsonProperty]
+        public List<TaxDetail> taxDetailLines
+        {
+            get; //=> Get("taxDetailLines", new List<TaxDetail>());
+
+            private set; //=> Set(value, "taxDetailsLines");
         }
 
         public decimal balance
@@ -271,8 +280,12 @@ namespace ONIT.VismaNetApi.Models
             get => Get<decimal>();
             set => Set(value);
         }
-
         public decimal vatExemptTotalInCurrency
+        {
+            get => Get<decimal>();
+            set => Set(value);
+        }
+        public decimal amount
         {
             get => Get<decimal>();
             set => Set(value);
@@ -313,14 +326,17 @@ namespace ONIT.VismaNetApi.Models
             get => Get<decimal>();
             set => Set(value);
         }
-        
+        public bool overrideNumberSeries
+        {
+            get => Get<bool>();
+            set => Set(value);
+        }
+
+
         [JsonProperty]
         public JObject extras { get; private set; }
 
         [JsonProperty] public string errorInfo { get; private set; }
-
-        [JsonProperty] public Metadata metadata { get; private set; }
-
         public string GetIdentificator()
         {
             return referenceNumber;
