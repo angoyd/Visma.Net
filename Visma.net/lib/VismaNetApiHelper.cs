@@ -21,7 +21,7 @@ namespace ONIT.VismaNetApi.Lib
     {
         private const int MaxReturnableEntitiesFromVismaNet = 1000;
         internal const string ApplicationType = "Visma.net Financials";
-        internal const string BaseApiUrl = "https://integration.visma.net/API/";
+        internal const string BaseApiUrl = "https://api.finance.visma.net/";
 
         public const string VismaNetDateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fff";
 
