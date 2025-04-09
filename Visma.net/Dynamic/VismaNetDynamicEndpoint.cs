@@ -22,7 +22,7 @@ namespace ONIT.VismaNetApi.Dynamic
         internal VismaNetDynamicEndpoint(string endpointName, VismaNetAuthorization auth, bool isResourceEndpoint = false)
         {
             _endpointName = endpointName;
-            _base = isResourceEndpoint ? "resources/v1/" : "controller/api/v1/";
+            _base = isResourceEndpoint ? "resources/v1/" : "v1/";
             _auth = auth;
             _isResourceEndpoint = isResourceEndpoint;
         }

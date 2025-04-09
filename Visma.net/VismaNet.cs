@@ -210,44 +210,10 @@ namespace ONIT.VismaNetApi
         {
             return await VismaNetApiHelper.TestConnection(Auth);
         }
-
-        /// <summary>
-        /// Get a new token from Visma.net
-        /// </summary>
-        /// <param name="username">User name</param>
-        /// <param name="password">Password</param>
-        /// <param name="clientId">System Client Id (Provided to you by Visma)</param>
-        /// <param name="secret">System Client Secret (Provided to you by Visma)</param>
-        /// <returns></returns>
-        public static async Task<string> GetToken(string username, string password, string clientId, string secret)
-        {
-            return await VismaNetApiHelper.GetToken(username, password, clientId, secret);
-        }
-
-        public static string GetOAuthUrl(string client_id, string callback, string state = null)
-        {
-            if (string.IsNullOrEmpty(client_id))
-                throw new ArgumentException(nameof(client_id));
-            if (string.IsNullOrEmpty(callback))
-                throw new ArgumentException(nameof(callback));
-            return
-                $"{VismaNetApiHelper.BaseApiUrl}{VismaNetControllers.OAuthAuthorize}?response_type=code&client_id={client_id}&scope=financialstasks&redirect_uri={Uri.EscapeDataString(callback)}&state={(state ?? Guid.NewGuid().ToString())}";
-        }
-
-        public static async Task<string> GetTokenUsingOAuth(string client_id, string client_secret, string code, string redirect_uri)
-        {
-            return await VismaNetApiHelper.GetTokenOAuth(client_id, client_secret, code, redirect_uri);
-        }
         public static async Task<VismaConnectToken> GetTokenFromVismaConnect(string clientId, string secret, string tenant_id, string scope = "vismanet_erp_service_api:create vismanet_erp_service_api:delete vismanet_erp_service_api:read vismanet_erp_service_api:update")
         {
             return await VismaNetApiHelper.GetTokenFromVismaConnect(clientId,secret,tenant_id,scope);
         }
-
-        public static async Task<List<CompanyContext>> GetContextsForToken(string token)
-        {
-            return await VismaNetApiHelper.GetContextsForToken(token);
-        }
-
         public async Task<Stream> GetAttachment(string attachmentId)
         {
             return await VismaNetApiHelper.GetAttachment(Auth, attachmentId);

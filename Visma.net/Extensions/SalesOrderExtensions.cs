@@ -98,7 +98,9 @@ namespace ONIT.VismaNetApi.Extensions
             if (v2SalesOrder.requestOn != default(DateTime))
                 v3SalesOrder.RequestOn = v2SalesOrder.requestOn;
 
-            v3SalesOrder.Shipping = new NewSalesOrderShippingDto();
+            if (v3SalesOrder.Shipping == null)
+                v3SalesOrder.Shipping = new NewSalesOrderShippingDto();
+
             v3SalesOrder.Shipping.ShipViaId = v2SalesOrder.shipVia?.id;
             v3SalesOrder.Shipping.PreferredWarehouseId = v2SalesOrder.preferredWarehouse?.id;
             if (v2SalesOrder.schedShipment != default(DateTime))

@@ -21,7 +21,7 @@ namespace ONIT.VismaNetApi.Lib
     {
         private const int MaxReturnableEntitiesFromVismaNet = 1000;
         internal const string ApplicationType = "Visma.net Financials";
-        internal const string BaseApiUrl = "https://integration.visma.net/API/";
+        internal const string BaseApiUrl = "https://api.finance.visma.net/";
 
         public const string VismaNetDateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fff";
 
@@ -551,52 +551,6 @@ namespace ONIT.VismaNetApi.Lib
                 return await client.GetStream(url);
             }
         }
-
-        internal static async Task<List<CompanyContext>> GetContextsForToken(string token)
-        {
-            var client = GetHttpClient(new VismaNetAuthorization { CompanyId = 0, Token = token });
-            {
-                return await client.Get<List<CompanyContext>>(GetApiUrlForController(VismaNetControllers.UserContext));
-            }
-        }
-
-        internal static async Task<string> GetToken(string username, string password, string clientId, string secret)
-        {
-            var webclient = GetHttpClient();
-            {
-                var url = GetApiUrlForController(VismaNetControllers.Token);
-                var content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("username", username),
-                    new KeyValuePair<string, string>("password", password),
-                    new KeyValuePair<string, string>("client_id", clientId),
-                    new KeyValuePair<string, string>("client_secret", secret),
-                    new KeyValuePair<string, string>("grant_type", "password")
-                });
-                var data = await webclient.PostMessage<JObject>(url, content);
-                return data["token"].Value<string>();
-            }
-        }
-
-        internal static async Task<string> GetTokenOAuth(string clientId, string secret, string code,
-            string redirect_uri)
-        {
-            var webclient = GetHttpClient();
-            {
-                var url = GetApiUrlForController(VismaNetControllers.Token);
-                var content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("code", code),
-                    new KeyValuePair<string, string>("client_id", clientId),
-                    new KeyValuePair<string, string>("client_secret", secret),
-                    new KeyValuePair<string, string>("redirect_uri", redirect_uri),
-                    new KeyValuePair<string, string>("grant_type", "authorization_code")
-                });
-                var data = await webclient.PostMessage<JObject>(url, content);
-                return data["token"].Value<string>();
-            }
-        }
-
         public static async Task<VismaConnectToken> GetTokenFromVismaConnect(string clientId, string secret, string tenant_id, string scope = "vismanet_erp_service_api:create vismanet_erp_service_api:delete vismanet_erp_service_api:read vismanet_erp_service_api:update")
         {
             try
