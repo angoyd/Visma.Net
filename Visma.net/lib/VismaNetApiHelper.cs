@@ -588,6 +588,17 @@ namespace ONIT.VismaNetApi.Lib
             return await client.Post<VismaActionResult>(actionUrl, new object());
         }
 
+        internal static async Task<VismaActionResult> CreditNoteAction(string invoiceNumber, string action,
+            VismaNetAuthorization authorization)
+        {
+            if (string.IsNullOrEmpty(invoiceNumber)) throw new ArgumentException(nameof(invoiceNumber));
+
+            var client = GetHttpClient(authorization);
+            var actionUrl =
+                GetApiUrlForController($"{VismaNetControllers.CustomerCreditNote}/{invoiceNumber}/action/{action}");
+            return await client.Post<VismaActionResult>(actionUrl, new object());
+        }
+
         internal static async Task<VismaActionResult> Action(VismaNetAuthorization authorization, string controller, string entityNumber, string actionName, object dto = null)
         {
             var client = GetHttpClient(authorization);
