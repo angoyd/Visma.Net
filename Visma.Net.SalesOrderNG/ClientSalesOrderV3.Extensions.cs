@@ -65,25 +65,25 @@ namespace Visma.Net.SalesOrderNG
             urlBuilder.Insert(0, VismaNetControllers.SalesOrderV3BaseUrl);
             AddVismaNetAuth(request);
 
-            JwtSecurityToken jwtToken = null;
-            if (!string.IsNullOrEmpty(_authorization.Token))
-            {
-                jwtToken = new JwtSecurityToken(_authorization.Token);
-            }
-            else if (!string.IsNullOrEmpty(_authorization.VismaConnectToken))
-            {
-                jwtToken = new JwtSecurityToken(_authorization.VismaConnectToken);
-            }
-            else
-            {
-                throw new VismaConnectException("No token found");
-            }
+            //JwtSecurityToken jwtToken = null;
+            //if (!string.IsNullOrEmpty(_authorization.Token))
+            //{
+            //    jwtToken = new JwtSecurityToken(_authorization.Token);
+            //}
+            //else if (!string.IsNullOrEmpty(_authorization.VismaConnectToken))
+            //{
+            //    jwtToken = new JwtSecurityToken(_authorization.VismaConnectToken);
+            //}
+            //else
+            //{
+            //    throw new VismaConnectException("No token found");
+            //}
             
 
-            if (!_authorization.VismaConnectScopes.Contains("visma.net.erp.salesorder") && !jwtToken.Claims.Any(c => c.Value.Contains("visma.net.erp.salesorder")))
-            {
-                throw new VismaConnectException("Scope has to contain visma.net.erp.salesorder scopes to use SalesOrderV3");
-            }
+            //if (!_authorization.VismaConnectScopes.Contains("visma.net.erp.salesorder") && !jwtToken.Claims.Any(c => c.Value.Contains("visma.net.erp.salesorder")))
+            //{
+            //    throw new VismaConnectException("Scope has to contain visma.net.erp.salesorder scopes to use SalesOrderV3");
+            //}
             
         }
 
@@ -148,10 +148,10 @@ namespace Visma.Net.SalesOrderNG
             return rsp;
         }
 
-        public async Task<IEnumerable<SalesOrderListDto>> getAllSalesOrder(string customerId = null, string status = null, DateTimeOffset? modifiedSince = null, string orderBy = null, string filter = null)
+        public async Task<IEnumerable<SalesOrderListDto>> getAllSalesOrder(string customerId = null, string status = null, DateTimeOffset? modifiedSince = null, string orderBy = null, string filter = null, IEnumerable<SalesOrderExpansions> expands = null)
         {
             int InitialPageSize = 100;
-            var firstPage = await SalesOrders_GetList_Async(customerId, status, modifiedSince, InitialPageSize, 0, orderBy, filter);
+            var firstPage = await SalesOrders_GetList_Async(customerId, status, modifiedSince, InitialPageSize, 0, orderBy, filter,expands);
             var rsp = new List<SalesOrderListDto>();
             if (firstPage == null)
                 return rsp;
@@ -172,7 +172,7 @@ namespace Visma.Net.SalesOrderNG
                     {
                         try
                         {
-                            return await SalesOrders_GetList_Async(customerId, status, modifiedSince, pageSize, page, orderBy, filter);
+                            return await SalesOrders_GetList_Async(customerId, status, modifiedSince, pageSize, page, orderBy, filter, expands);
                         }
                         finally
                         {
@@ -186,10 +186,10 @@ namespace Visma.Net.SalesOrderNG
             return rsp;
         }
 
-        public async Task<IEnumerable<SalesOrderListDto>> getAllSalesOrderOfType(string type, string customerId = null, string status = null, DateTimeOffset? modifiedSince = null, string orderBy = null, string filter = null)
+        public async Task<IEnumerable<SalesOrderListDto>> getAllSalesOrderOfType(string type, string customerId = null, string status = null, DateTimeOffset? modifiedSince = null, string orderBy = null, string filter = null, IEnumerable<SalesOrderExpansions> expands = null)
         {
             int InitialPageSize = 100;
-            var firstPage = await SalesOrders_GetList_typeAsync(type,customerId, status, modifiedSince, InitialPageSize, 0, orderBy, filter);
+            var firstPage = await SalesOrders_GetList_typeAsync(type,customerId, status, modifiedSince, InitialPageSize, 0, orderBy, filter, expands);
             var rsp = new List<SalesOrderListDto>();
             if (firstPage == null)
                 return rsp;
@@ -210,7 +210,7 @@ namespace Visma.Net.SalesOrderNG
                     {
                         try
                         {
-                            return await SalesOrders_GetList_typeAsync(type, customerId, status, modifiedSince, pageSize, page, orderBy, filter);
+                            return await SalesOrders_GetList_typeAsync(type, customerId, status, modifiedSince, pageSize, page, orderBy, filter, expands);
                         }
                         finally
                         {

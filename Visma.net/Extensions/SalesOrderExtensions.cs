@@ -183,7 +183,7 @@ namespace ONIT.VismaNetApi.Extensions
             v2SalesOrder.customerRefNo = v3SalesOrder.Customer.RefNo;
             if (v3SalesOrder.Billing.Address != null)
             {
-                v2SalesOrder.soBillingAddress.overrideAddress = v3SalesOrder.Billing.Address.OverridesDefault;
+                v2SalesOrder.soBillingAddress.overrideAddress = v3SalesOrder.Billing.Address.OverridesDefault ?? false;
                 v2SalesOrder.soBillingAddress.addressLine1 = v3SalesOrder.Billing.Address.Line1;
                 v2SalesOrder.soBillingAddress.addressLine2 = v3SalesOrder.Billing.Address.Line2;
                 v2SalesOrder.soBillingAddress.addressLine3 = v3SalesOrder.Billing.Address.Line3;
@@ -195,7 +195,7 @@ namespace ONIT.VismaNetApi.Extensions
 
             if (v3SalesOrder.Shipping.Address != null)
             {
-                v2SalesOrder.soShippingAddress.overrideAddress = v3SalesOrder.Shipping.Address.OverridesDefault;
+                v2SalesOrder.soShippingAddress.overrideAddress = v3SalesOrder.Shipping.Address.OverridesDefault ?? false;
                 v2SalesOrder.soShippingAddress.addressLine1 = v3SalesOrder.Shipping.Address.Line1;
                 v2SalesOrder.soShippingAddress.addressLine2 = v3SalesOrder.Shipping.Address.Line2;
                 v2SalesOrder.soShippingAddress.addressLine3 = v3SalesOrder.Shipping.Address.Line3;
@@ -207,7 +207,7 @@ namespace ONIT.VismaNetApi.Extensions
 
             if (v3SalesOrder.Billing.Contact != null)
             {
-                v2SalesOrder.soBillingContact.overrideContact = v3SalesOrder.Billing.Contact.OverridesDefault;
+                v2SalesOrder.soBillingContact.overrideContact = v3SalesOrder.Billing.Contact.OverridesDefault ?? false;
                 v2SalesOrder.soBillingContact.attention = v3SalesOrder.Billing.Contact.Attention;
                 v2SalesOrder.soBillingContact.email = v3SalesOrder.Billing.Contact.Email;
                 v2SalesOrder.soBillingContact.name = v3SalesOrder.Billing.Contact.Name;
@@ -215,7 +215,7 @@ namespace ONIT.VismaNetApi.Extensions
             }
             if (v3SalesOrder.Shipping.Contact != null)
             {
-                v2SalesOrder.soShippingContact.overrideContact = v3SalesOrder.Shipping.Contact.OverridesDefault;
+                v2SalesOrder.soShippingContact.overrideContact = v3SalesOrder.Shipping.Contact.OverridesDefault ?? false;
                 v2SalesOrder.soShippingContact.attention = v3SalesOrder.Shipping.Contact.Attention;
                 v2SalesOrder.soShippingContact.email = v3SalesOrder.Shipping.Contact.Email;
                 v2SalesOrder.soShippingContact.name = v3SalesOrder.Shipping.Contact.Name;
@@ -262,9 +262,9 @@ namespace ONIT.VismaNetApi.Extensions
                 if (v3SalesOrder.Shipping.ScheduledDate != null)
                     v2SalesOrder.schedShipment = ((DateTimeOffset)v3SalesOrder.Shipping.ScheduledDate).DateTime;
 
-                v2SalesOrder.insurance = v3SalesOrder.Shipping.Insurance;
-                v2SalesOrder.residentialDelivery = v3SalesOrder.Shipping.ResidentialDelivery;
-                v2SalesOrder.saturdayDelivery = v3SalesOrder.Shipping.SaturdayDelivery;
+                v2SalesOrder.insurance = v3SalesOrder.Shipping.Insurance ?? false;
+                v2SalesOrder.residentialDelivery = v3SalesOrder.Shipping.ResidentialDelivery ?? false;
+                v2SalesOrder.saturdayDelivery = v3SalesOrder.Shipping.SaturdayDelivery ?? false;
             }
 
 
@@ -283,7 +283,7 @@ namespace ONIT.VismaNetApi.Extensions
                 if (l.DiscountPercent != null)
                     newline.discountPercent = (double)l.DiscountPercent;
                 newline.externalLink = l.ExternalLink;
-                newline.manualDiscount = l.HasManualDiscount;
+                newline.manualDiscount = l.HasManualDiscount ?? false;
                 newline.inventory = l.Inventory.Id;
                 newline.note = l.Note;
                 

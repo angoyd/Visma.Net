@@ -118,5 +118,83 @@ namespace ONIT.VismaNetApi.Models
             get { return Get(defaultValue: new List<Allocations>()); }
             set { Set(value); }
         }
+
+        public string note
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string externalLink
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string alternateID
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string customStr1
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string customStr2
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string customStr3
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string customStr4
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public string customStr5
+        {
+            get { return Get<string>(); }
+            set { Set(value); }
+        }
+
+        public decimal? customDec1
+        {
+            get { return Get<decimal?>(); }
+            set { Set(value); }
+        }
+
+        public decimal? customDec2
+        {
+            get { return Get<decimal?>(); }
+            set { Set(value); }
+        }
+
+        public int? customInt1
+        {
+            get { return Get<int?>(); }
+            set { Set(value); }
+        }
+
+        public int? customInt2
+        {
+            get { return Get<int?>(); }
+            set { Set(value); }
+        }
+
+        public DateTime? customDateTimeUTC1
+        {
+            get { return Get<DateTime?>(); }
+            set { Set(value); }
+        }
     }
 }
