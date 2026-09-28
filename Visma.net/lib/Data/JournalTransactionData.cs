@@ -43,6 +43,15 @@ namespace ONIT.VismaNetApi.Lib.Data
             return await VismaNetApiHelper.AddAttachmentToJournalTransaction(Authorization, batchNumber, byteArray, fileName, module);
         }
 
+        public async Task<string> AddAttachmentToJournalTransactionLine(string batchNumber, int lineNumber, byte[] byteArray, string fileName, JournalTransactionModule module = JournalTransactionModule.ModuleGL)
+        {
+            if (byteArray == default(byte[]))
+                throw new ArgumentNullException(nameof(byteArray), "ByteArray is missing");
+            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(Path.GetExtension(fileName)))
+                throw new ArgumentNullException(nameof(fileName), "File name must be provided and have an extention");
+            return await VismaNetApiHelper.AddAttachmentToJournalTransactionLine(Authorization, batchNumber, lineNumber, byteArray, fileName, module);
+        }
+
         public async Task<VismaActionResult> Release(JournalTransaction transaction)
         {
             return await VismaNetApiHelper.Action(Authorization, ApiControllerUri, transaction.GetIdentificator(), "release");

@@ -248,7 +248,17 @@ namespace ONIT.VismaNetApi.Lib
             var url = GetApiUrlForController(VismaNetControllers.JournalTransactionV2, $"/module/{module.ToString().Substring(6)}/{batch}/attachment");
             return AddAttachmentToController<string>(auth, url, bytes, fileName);
         }
-        
+
+        internal static Task<string> AddAttachmentToJournalTransactionLine(VismaNetAuthorization auth, string batch,
+            int lineNumber,
+            byte[] bytes,
+            string fileName,
+            JournalTransactionModule module = JournalTransactionModule.ModuleGL)
+        {
+            var url = GetApiUrlForController(VismaNetControllers.JournalTransactionV2, $"/module/{module.ToString().Substring(6)}/{batch}/{lineNumber}/attachment");
+            return AddAttachmentToController<string>(auth, url, bytes, fileName);
+        }
+
 
         internal static string AppendToQuery(string query, string key, object value)
         {

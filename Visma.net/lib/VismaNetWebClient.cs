@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -243,7 +244,8 @@ namespace ONIT.VismaNetApi.Lib
                     message.Headers.Add("erp-api-background", erpApiBackground);
                 }
                 var serialized = Serialize(data);
-                message.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
+                //message.Content = new StringContent(serialized, Encoding.UTF8, "application/json");
+                message.Content = CreateCompressedJsonContent(serialized);
 
                 var result = await HttpClient.SendAsync(message);
 
@@ -352,6 +354,25 @@ namespace ONIT.VismaNetApi.Lib
             var message = await PrepareMessageAsync(HttpMethod.Delete, url);
             var result = await HttpClient.SendAsync(message);
             return result.StatusCode == HttpStatusCode.NoContent;
+        }
+
+        private static HttpContent CreateCompressedJsonContent(string serialized)
+        {
+            var bytes = Encoding.UTF8.GetBytes(serialized);
+            byte[] compressed;
+            using (var output = new MemoryStream())
+            {
+                using (var gzip = new GZipStream(output, CompressionMode.Compress, true))
+                {
+                    gzip.Write(bytes, 0, bytes.Length);
+                }
+                compressed = output.ToArray();
+            }
+
+            var content = new ByteArrayContent(compressed);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json") { CharSet = "utf-8" };
+            content.Headers.ContentEncoding.Add("gzip");
+            return content;
         }
     }
 }
