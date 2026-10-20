@@ -29,6 +29,8 @@ namespace ONIT.VismaNetApi.Lib.Data
         /// <returns>List of all entities</returns>
         public override async Task<List<JournalTransaction>> Find(NameValueCollection parameters) => PostProcessJournalTransactions(await VismaNetApiHelper.GetAllWithPagination<JournalTransaction>(ApiControllerUri, Authorization, parameters));
 
+        public override async Task<List<JournalTransaction>> GetPage(int pageNumber, int pageSize, NameValueCollection parameters = null) => PostProcessJournalTransactions(await base.GetPage(pageNumber, pageSize, parameters));
+
         public async Task<string> AddAttachmentToJournalTransaction(string batchNumber, string content, string fileName, JournalTransactionModule module = JournalTransactionModule.ModuleGL)
         {
             return await AddAttachmentToJournalTransaction(batchNumber, Encoding.UTF8.GetBytes(content), fileName, module);

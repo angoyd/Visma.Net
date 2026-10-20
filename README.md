@@ -11,6 +11,10 @@ Contact me on ole@on-it.no with details about your project and let's see if we'r
 
 ## Changelog
 
+### v4.4.5
+  * `CustomerCreditNote`: `attachments`, `TaxDetails`, `roundingDiff`, `salesPerson`, `accountingCostRef`, `originatorDocRef`, `contractDocRef` (same as `CustomerInvoice`).
+  * `GetPage(pageNumber, pageSize, parameters)` on all paginated data classes (e.g. `CustomerInvoice`, `CustomerCreditNote`) to fetch a single page. Total count is in `metadata.totalCount`.
+
 ### Dynamic and Resources in v3.6
 
 You can now use vismaNet.Dyanmic and vismaNet.Resource to access all endpoints in the API with dynamic typing.

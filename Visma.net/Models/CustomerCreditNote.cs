@@ -222,6 +222,43 @@ namespace ONIT.VismaNetApi.Models
         get => Get<string>();
         set => Set(value);
     }
+
+    /// <summary>
+    /// Write only in the API (CustomerCreditNoteUpdateDto), not returned by GET.
+    /// </summary>
+    public string accountingCostRef
+    {
+        get => Get<string>();
+        set => Set(value);
+    }
+
+    /// <summary>
+    /// Write only in the API (CustomerCreditNoteUpdateDto), not returned by GET.
+    /// </summary>
+    public string originatorDocRef
+    {
+        get => Get<string>();
+        set => Set(value);
+    }
+
+    /// <summary>
+    /// Write only in the API (CustomerCreditNoteUpdateDto), not returned by GET.
+    /// </summary>
+    public string contractDocRef
+    {
+        get => Get<string>();
+        set => Set(value);
+    }
+
+    /// <summary>
+    /// Read as salesPerson {id, description}, written as salesperson {value}.
+    /// </summary>
+    [JsonProperty]
+    public DescriptiveDto salesPerson
+    {
+        get => Get<DescriptiveDto>("salesperson");
+        set => Set(value, "salesperson");
+    }
     #endregion
 
     #region Read only properties (CustomerInvoiceDto)
@@ -365,6 +402,21 @@ namespace ONIT.VismaNetApi.Models
       get { return Get<string>(); }
       private set { Set(value); }
     }
+
+    /// <summary>
+    /// Requires expandAttachments=true.
+    /// </summary>
+    [JsonProperty]
+    public List<Attachment> attachments { get; private set; } = new List<Attachment>();
+
+    /// <summary>
+    /// Requires expandTaxDetails=true.
+    /// </summary>
+    [JsonProperty]
+    public List<TaxDetail> TaxDetails { get; private set; }
+
+    [JsonProperty]
+    public decimal roundingDiff { get; private set; }
 
     #endregion
 

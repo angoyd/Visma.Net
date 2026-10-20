@@ -481,6 +481,21 @@ namespace ONIT.VismaNetApi.Lib
             return destination;
         }
 
+        /// <summary>
+        ///     Fetches a single page. Total count is available in metadata.totalCount on each returned entity.
+        /// </summary>
+        public static async Task<List<T>> GetPage<T>(string ApiControllerUri, VismaNetAuthorization Authorization, int pageNumber, int pageSize, NameValueCollection parameters = null) where T : DtoPaginatedProviderBase
+        {
+            if (pageNumber < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "pageNumber starts at 1");
+            if (pageSize < 1)
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "pageSize must be greater than 0");
+
+            var rsp = await GetAll<T>(ApiControllerUri, Authorization, CreatePagionationParameters(pageSize, pageNumber, parameters)) ?? new List<T>();
+            rsp.ForEach(x => x.InternalPrepareForUpdate());
+            return rsp;
+        }
+
         const int initialPageSize = 1000;
         public static async Task<List<T>> GetAllWithPagination<T>(string ApiControllerUri, VismaNetAuthorization Authorization, NameValueCollection parameters = null) where T : DtoPaginatedProviderBase, IProvideIdentificator
         {

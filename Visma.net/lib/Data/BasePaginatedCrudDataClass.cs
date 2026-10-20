@@ -26,6 +26,15 @@ namespace ONIT.VismaNetApi.Lib.Data
         public override async Task<List<T>> Find(NameValueCollection parameters) => await VismaNetApiHelper.GetAllWithPagination<T>(ApiControllerUri, Authorization, parameters);
 
         /// <summary>
+        ///     Retrieves a single page of entities, in the order returned by the API.
+        /// </summary>
+        /// <param name="pageNumber">Page number, starting at 1</param>
+        /// <param name="pageSize">Number of entities per page</param>
+        /// <param name="parameters">Optional filter parameters</param>
+        /// <returns>The entities on the page. Total count is available in metadata.totalCount on each entity.</returns>
+        public virtual async Task<List<T>> GetPage(int pageNumber, int pageSize, NameValueCollection parameters = null) => await VismaNetApiHelper.GetPage<T>(ApiControllerUri, Authorization, pageNumber, pageSize, parameters);
+
+        /// <summary>
         ///     Executes the action on all elements streamed from the API.
         /// </summary>
         /// <param name="action"></param>
