@@ -418,6 +418,12 @@ namespace ONIT.VismaNetApi.Models
     [JsonProperty]
     public decimal roundingDiff { get; private set; }
 
+    /// <summary>
+    /// Requires expandApplications=true.
+    /// </summary>
+    [JsonProperty]
+    public List<Applications> applications { get; private set; }
+
     #endregion
 
     #region Methods
