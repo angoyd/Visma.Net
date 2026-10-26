@@ -117,6 +117,12 @@ namespace ONIT.VismaNetApi.Models
       set => Set(value);
     }
 
+    public PeppolScheme peppolScheme
+    {
+      get => Get<PeppolScheme>();
+      set => Set(value);
+    }
+
     [JsonProperty]
     public DateTime lastModifieDateTime { get; private set; }
 

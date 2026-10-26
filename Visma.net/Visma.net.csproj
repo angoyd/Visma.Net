@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Version>4.4.6.0</Version>
+        <Version>4.4.7.0</Version>
         <TargetFrameworks>netstandard2.0;net462;net6</TargetFrameworks>
     	<Title>Visma.net</Title>
         <Copyright>Copyright © ON IT AS 2014 - 2022</Copyright>
@@ -21,8 +21,8 @@
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageIcon>on_it_logo.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <AssemblyVersion>4.4.6.0</AssemblyVersion>
-        <FileVersion>4.4.6.0</FileVersion>
+        <AssemblyVersion>4.4.7.0</AssemblyVersion>
+        <FileVersion>4.4.7.0</FileVersion>
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
 	</PropertyGroup>
     <ItemGroup>
